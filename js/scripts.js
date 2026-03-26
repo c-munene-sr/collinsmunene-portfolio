@@ -1,13 +1,15 @@
 /*!
- * Collins Munene Portfolio
- 
+ * Collins Munene Portfolio — Main JS
+ * Sticky Nav + Smooth Scroll + Active Tracking + Particles
  */
 (function ($) {
   "use strict";
 
   // ======================== CONFIG ========================
-  var NAV_OFFSET = 80; //
+  var NAV_OFFSET = 80; // pixels from top to offset scroll targets
 
+  // ======================== SMOOTH SCROLLING ========================
+  // Works on all anchor links with class js-scroll-trigger
   $(document).on("click", 'a.js-scroll-trigger[href*="#"]:not([href="#"])', function (e) {
     if (
       location.pathname.replace(/^\//, "") ===
