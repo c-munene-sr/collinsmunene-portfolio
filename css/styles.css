@@ -23,7 +23,8 @@
   --font-heading: 'Sora', sans-serif;
   --font-body: 'Space Grotesk', sans-serif;
   --font-mono: 'JetBrains Mono', monospace;
-  --nav-height: 76px;
+  --nav-height: 72px;
+  --nav-height-shrink: 56px;
   --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
@@ -127,14 +128,18 @@ img {
 
 .mb-4 { margin-bottom: 1.5rem !important; }
 .mb-5 { margin-bottom: 3rem !important; }
+.mb-md-0 { }
+@media (min-width: 768px) { .mb-md-0 { margin-bottom: 0 !important; } }
 .mt-4 { margin-top: 1.5rem !important; }
 .mx-2 { margin-left: 0.5rem !important; margin-right: 0.5rem !important; }
 .mx-auto { margin-left: auto !important; margin-right: auto !important; }
 .my-3 { margin-top: 1rem !important; margin-bottom: 1rem !important; }
 .ml-2 { margin-left: 0.5rem !important; }
 .text-center { text-align: center !important; }
+.text-uppercase { text-transform: uppercase !important; }
 .text-danger { color: #ff4757 !important; }
 .d-none { display: none !important; }
+.align-items-stretch { align-items: stretch !important; }
 
 @media (min-width: 768px) {
   .d-md-block { display: block !important; }
@@ -165,13 +170,15 @@ img {
   text-transform: uppercase;
 }
 
-.btn-accent {
+.btn-accent,
+.btn-primary {
   color: var(--bg-dark);
   background: var(--accent);
   border-color: var(--accent);
   box-shadow: 0 0 20px var(--accent-glow), 0 0 60px rgba(0, 240, 255, 0.1);
 }
-.btn-accent:hover {
+.btn-accent:hover,
+.btn-primary:hover {
   color: var(--bg-dark);
   background: #fff;
   border-color: #fff;
@@ -219,19 +226,25 @@ img {
   box-shadow: 0 4px 15px var(--accent-glow);
 }
 
-/* ======================== NAVIGATION ======================== */
+/* ============================================================
+   STICKY NAVIGATION — The main fix
+   ============================================================ */
 #mainNav {
-  padding: 1rem 0;
-  background: rgba(10, 14, 23, 0.85);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border-bottom: 1px solid var(--border-color);
-  transition: all 0.4s ease;
-  z-index: 1000;
   position: fixed;
   top: 0;
-  right: 0;
   left: 0;
+  right: 0;
+  z-index: 9999;
+  padding: 1.1rem 0;
+  background: rgba(10, 14, 23, 0.6);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid transparent;
+  transition:
+    padding 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+    background 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+    border-color 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+    box-shadow 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 #mainNav .container {
@@ -241,9 +254,12 @@ img {
   flex-wrap: wrap;
 }
 
+/* SCROLLED STATE — compact, opaque, with border + shadow */
 #mainNav.navbar-shrink {
   padding: 0.6rem 0;
-  background: rgba(10, 14, 23, 0.95);
+  background: rgba(10, 14, 23, 0.97);
+  border-bottom-color: var(--border-color);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
 }
 
 .navbar-brand {
@@ -253,6 +269,10 @@ img {
   color: var(--accent) !important;
   text-decoration: none;
   letter-spacing: -0.5px;
+  transition: font-size 0.3s ease;
+}
+#mainNav.navbar-shrink .navbar-brand {
+  font-size: 1.2rem;
 }
 .brand-icon {
   background: linear-gradient(135deg, var(--accent), var(--accent-2));
@@ -261,15 +281,21 @@ img {
   background-clip: text;
 }
 
+/* Hamburger toggle */
 .navbar-toggler {
   padding: 0.5rem 0.75rem;
   font-size: 1.25rem;
   background: transparent;
   border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 4px;
+  border-radius: 6px;
   color: var(--text-primary);
   cursor: pointer;
   display: none;
+  transition: all 0.25s ease;
+}
+.navbar-toggler:hover {
+  border-color: var(--accent);
+  background: rgba(0, 240, 255, 0.05);
 }
 
 .navbar-toggler-icon {
@@ -283,6 +309,7 @@ img {
   background-size: 100%;
 }
 
+/* Nav links container */
 .navbar-collapse {
   display: flex;
   align-items: center;
@@ -294,22 +321,23 @@ img {
   margin: 0;
   padding: 0;
   margin-left: auto;
+  gap: 0.25rem;
 }
 
 .nav-item {
-  margin-left: 2rem;
+  margin-left: 1.5rem;
 }
 
 .nav-link {
   font-family: var(--font-heading);
-  font-size: 0.8rem;
+  font-size: 0.78rem;
   font-weight: 500;
   color: var(--text-secondary) !important;
   text-transform: uppercase;
   letter-spacing: 1.5px;
   padding: 0.5rem 0;
   position: relative;
-  transition: var(--transition);
+  transition: color 0.3s ease;
 }
 .nav-link::after {
   content: '';
@@ -318,24 +346,66 @@ img {
   left: 0;
   width: 0;
   height: 2px;
-  background: var(--accent);
+  background: linear-gradient(90deg, var(--accent), var(--accent-2));
+  border-radius: 2px;
   transition: width 0.3s ease;
 }
 .nav-link:hover,
 .nav-link.active {
-  color: var(--accent) !important;
+  color: #fff !important;
 }
 .nav-link:hover::after,
 .nav-link.active::after {
   width: 100%;
 }
 
+/* ======================== MOBILE NAV ======================== */
 @media (max-width: 991.98px) {
-  .navbar-toggler { display: block; }
-  .navbar-collapse { display: none; flex-basis: 100%; }
-  .navbar-collapse.show { display: flex; flex-direction: column; }
-  .navbar-nav { flex-direction: column; width: 100%; padding: 1rem 0; }
-  .nav-item { margin-left: 0; margin-bottom: 0.5rem; }
+  .navbar-toggler {
+    display: block;
+  }
+  .navbar-collapse {
+    display: none;
+    flex-basis: 100%;
+    width: 100%;
+  }
+  .navbar-collapse.show {
+    display: flex;
+    flex-direction: column;
+    padding-top: 0.75rem;
+    padding-bottom: 0.5rem;
+    border-top: 1px solid var(--border-color);
+    margin-top: 0.75rem;
+    animation: navSlideDown 0.3s ease both;
+  }
+  .navbar-nav {
+    flex-direction: column;
+    width: 100%;
+    gap: 0;
+  }
+  .nav-item {
+    margin-left: 0;
+  }
+  .nav-link {
+    padding: 0.75rem 0;
+    font-size: 0.85rem;
+    display: block;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+  }
+  .nav-link::after {
+    bottom: -1px;
+  }
+}
+
+@keyframes navSlideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* ======================== MASTHEAD / HERO ======================== */
@@ -372,7 +442,7 @@ img {
   position: relative;
   z-index: 10;
   text-align: center;
-  padding-top: 6rem;
+  padding-top: 7rem;
   padding-bottom: 3rem;
 }
 
@@ -861,6 +931,12 @@ img {
 .form-group {
   margin-bottom: 1.25rem;
 }
+.form-group-textarea {
+  height: 100%;
+}
+.form-group-textarea textarea {
+  height: 100%;
+}
 
 .form-control {
   display: block;
@@ -919,14 +995,8 @@ textarea.form-control {
 
 /* ======================== ANIMATIONS ======================== */
 @keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 @keyframes scrollPulse {
@@ -934,7 +1004,7 @@ textarea.form-control {
   50% { opacity: 1; transform: scaleY(1.2); }
 }
 
-/* Scroll-triggered animations */
+/* Scroll-triggered reveal animations */
 .service-card,
 .project-card,
 .fav-card,
@@ -991,16 +1061,8 @@ textarea.form-control {
     font-size: 0.75rem;
   }
 
-  .project-showcase .col-lg-4 {
-    flex: 0 0 100%;
-    max-width: 100%;
-  }
-
-  .service-grid .col-lg-4 {
-    flex: 0 0 100%;
-    max-width: 100%;
-  }
-
+  .project-showcase .col-lg-4,
+  .service-grid .col-lg-4,
   .favourites-grid .col-lg-4 {
     flex: 0 0 100%;
     max-width: 100%;
@@ -1018,28 +1080,18 @@ textarea.form-control {
 }
 
 @media (min-width: 768px) and (max-width: 991.98px) {
-  .project-showcase .col-lg-4 {
-    flex: 0 0 50%;
-    max-width: 50%;
-  }
+  .project-showcase .col-lg-4,
   .favourites-grid .col-lg-4 {
     flex: 0 0 50%;
     max-width: 50%;
   }
 }
 
-/* ======================== COLLAPSE (Bootstrap compat) ======================== */
+/* ======================== BOOTSTRAP COMPAT ======================== */
 .collapse:not(.show) {
   display: none;
 }
 
-.navbar-collapse.collapsing {
-  height: 0;
-  overflow: hidden;
-  transition: height 0.35s ease;
-}
-
-/* ======================== ALERT STYLES ======================== */
 .alert {
   padding: 1rem 1.25rem;
   border-radius: 10px;
